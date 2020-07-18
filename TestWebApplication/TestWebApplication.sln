@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{0BAE195B-BD6C-4EAF-AF1B-1AFFE1A90872}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{0BAE195B-BD6C-4EAF-AF1B-1AFFE1A90872}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{2572B934-8D77-410F-A6D5-F2C8AAB90314}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{2572B934-8D77-410F-A6D5-F2C8AAB90314}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{95DEFD3F-09F1-46B9-B4D0-356AAE32870E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{95DEFD3F-09F1-46B9-B4D0-356AAE32870E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Deployable", "1 Deployable", "{ACE9ECFD-B153-4D03-9B7E-34E35CF7EC70}"
 EndProject
@@ -17,11 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 DataAccess", "3 DataAcces
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{B6AC3747-3E0B-4356-A360-A08C52076D21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTest", "WebTest\WebTest.csproj", "{6CD6EB34-D83F-4D27-9338-A9FE07AB08FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTest", "WebTest\WebTest.csproj", "{6CD6EB34-D83F-4D27-9338-A9FE07AB08FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTest", "ServiceTest\ServiceTest.csproj", "{79B03CFB-A145-46FD-B2F5-D4C0DE37C924}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTest", "ServiceTest\ServiceTest.csproj", "{79B03CFB-A145-46FD-B2F5-D4C0DE37C924}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTest", "DataTest\DataTest.csproj", "{FBEACA05-D3AD-4BE0-8335-AE5CBE0159A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTest", "DataTest\DataTest.csproj", "{FBEACA05-D3AD-4BE0-8335-AE5CBE0159A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataModel", "DataModel\DataModel.csproj", "{07377A28-DAED-4365-B127-20194B3E4C27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{FBEACA05-D3AD-4BE0-8335-AE5CBE0159A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBEACA05-D3AD-4BE0-8335-AE5CBE0159A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBEACA05-D3AD-4BE0-8335-AE5CBE0159A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07377A28-DAED-4365-B127-20194B3E4C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07377A28-DAED-4365-B127-20194B3E4C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07377A28-DAED-4365-B127-20194B3E4C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07377A28-DAED-4365-B127-20194B3E4C27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{6CD6EB34-D83F-4D27-9338-A9FE07AB08FE} = {B6AC3747-3E0B-4356-A360-A08C52076D21}
 		{79B03CFB-A145-46FD-B2F5-D4C0DE37C924} = {B6AC3747-3E0B-4356-A360-A08C52076D21}
 		{FBEACA05-D3AD-4BE0-8335-AE5CBE0159A9} = {B6AC3747-3E0B-4356-A360-A08C52076D21}
+		{07377A28-DAED-4365-B127-20194B3E4C27} = {CB38F3C6-1BCA-46F0-BD99-BDF6054654AF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7DCCF1C-F566-47C7-840D-966EB955CB09}

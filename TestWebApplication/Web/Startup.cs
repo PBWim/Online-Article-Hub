@@ -1,11 +1,18 @@
 ﻿namespace Web
 {
+    using System;
+    using System.Security.Claims;
+    using Data;
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Web.Helpers;
 
     public class Startup
     {
@@ -23,8 +30,52 @@
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
             });
+
+            // Register DBContext with ConnectionString
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // https://www.c-sharpcorner.com/article/cookie-authentication-in-net-core-3-0/
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-2.2
+            // Cookie based authorization - with Default values
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+            // Or we can customize further as below
+            //services.AddAuthentication("CookieAuthentication")
+            //     .AddCookie("CookieAuthentication", config =>
+            //     {
+            //         config.Cookie = new CookieBuilder
+            //         {
+            //             Name = "UserLoginCookie",
+            //             HttpOnly = true,
+            //             Expiration = new TimeSpan(0, 30, 0),
+            //             IsEssential = true,
+            //             SameSite = SameSiteMode.Strict,
+            //             SecurePolicy = CookieSecurePolicy.Always,
+            //         };
+            //         config.LoginPath = "/Account/Login";
+            //         config.LogoutPath = "/Account/SignOut";
+            //         config.AccessDeniedPath = "/Account/AccessDenied";
+            //     });
+
+            services.AddAuthorization(config =>
+            {
+                // https://www.c-sharpcorner.com/article/policy-based-role-based-authorization-in-asp-net-core/
+                // Added claims for user defined policy
+                config.AddPolicy("UserPolicy", policyBuilder =>
+                {
+                    policyBuilder.UserRequireCustomClaim(ClaimTypes.Email);
+                    policyBuilder.UserRequireCustomClaim(ClaimTypes.DateOfBirth);
+                });
+            });
+
+            // https://www.c-sharpcorner.com/article/policy-based-role-based-authorization-in-asp-net-core/
+            // Registered two handler services PoliciesAuthorizationHandler and 
+            // RolesAuthorizationHandler of IAuthorizationHandler type
+            services.AddScoped<IAuthorizationHandler, PoliciesAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler, RolesAuthorizationHandler>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -46,6 +97,10 @@
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-2.2
+            // Invoke the Authentication Middleware that sets the HttpContext.User property
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
