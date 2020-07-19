@@ -9,7 +9,7 @@
 
         public string LastName { get; set; }
 
-        public bool IsAdmin { get; set; }
+        public string Role { get; set; }
 
         public int LastModifiedBy { get; set; }
 

@@ -102,6 +102,11 @@
             // Invoke the Authentication Middleware that sets the HttpContext.User property
             app.UseAuthentication();
 
+            // https://blog.rsuter.com/automatically-migrate-your-entity-framework-core-managed-database-on-asp-net-core-application-start/
+            // https://stackoverflow.com/questions/34343599/how-to-seed-users-and-roles-with-code-first-migration-using-identity-asp-net-cor
+            // Run Migrate Database scripts and Seed default data
+            app.UpdateDatabase();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
