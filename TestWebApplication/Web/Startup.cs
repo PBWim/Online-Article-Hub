@@ -2,16 +2,21 @@
 {
     using System;
     using System.Security.Claims;
+    using AutoMapper;
     using Data;
+    using DataModel;
     using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Shared;
+    using Shared.Auth;
+    using Shared.Mapper;
     using Web.Helpers;
 
     public class Startup
@@ -36,6 +41,41 @@
             // Register DBContext with ConnectionString
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-2.0&tabs=visual-studio#create-a-web-app-with-authentication
+            // User Identity settings are defined here. So in the UserManager (on repository when user creating, updating, login etc)
+            // these settings are validated.
+            services.AddDefaultIdentity<User>(options =>
+            {
+                // User settings
+                options.User = new UserOptions
+                {
+                    RequireUniqueEmail = true
+                };
+                // Password settings
+                options.Password = new PasswordOptions
+                {
+                    RequireDigit = true,
+                    RequiredLength = 10,
+                    RequireLowercase = true,
+                    RequireUppercase = true,
+                    RequireNonAlphanumeric = true,
+                    RequiredUniqueChars = 0
+                };
+                // Lockout settings
+                options.Lockout = new LockoutOptions
+                {
+                    DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15),
+                    AllowedForNewUsers = true,
+                    MaxFailedAccessAttempts = 5
+                };
+                // SignIn settings
+                options.SignIn = new SignInOptions
+                {
+                    RequireConfirmedEmail = false,
+                    RequireConfirmedPhoneNumber = false
+                };
+            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             // https://www.c-sharpcorner.com/article/cookie-authentication-in-net-core-3-0/
             // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-2.2
@@ -71,11 +111,12 @@
                 });
             });
 
-            // https://www.c-sharpcorner.com/article/policy-based-role-based-authorization-in-asp-net-core/
-            // Registered two handler services PoliciesAuthorizationHandler and 
-            // RolesAuthorizationHandler of IAuthorizationHandler type
-            services.AddScoped<IAuthorizationHandler, PoliciesAuthorizationHandler>();
-            services.AddScoped<IAuthorizationHandler, RolesAuthorizationHandler>();
+            // Register Services and DI
+            services.RegisterServices();
+
+            // AutoMapper
+            // https://code-maze.com/automapper-net-core/
+            services.AddAutoMapper(typeof(AutoMapperProfile));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

@@ -3,6 +3,7 @@
     using System.Diagnostics;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Shared.Models;
     using Web.Models;
 
     public class HomeController : Controller
@@ -25,7 +26,7 @@
         [Authorize]
         public ActionResult Users()
         {
-            var uses = new Users();
+            var uses = new UserModel();
             return View(uses.GetUsers());
         }
 
@@ -36,7 +37,7 @@
         [Authorize(Roles = "User")]
         public ActionResult UsersRole()
         {
-            var uses = new Users();
+            var uses = new UserModel();
             return View(nameof(this.Users), uses.GetUsers());
         }
 
@@ -45,7 +46,7 @@
         [Authorize(Roles = "Admin")]
         public ActionResult AdminUser()
         {
-            var uses = new Users();
+            var uses = new UserModel();
             return View(nameof(this.Users), uses.GetUsers());
         }
 
