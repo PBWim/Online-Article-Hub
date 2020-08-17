@@ -1,5 +1,6 @@
 ﻿namespace Service
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using DataRepository.Contracts;
     using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,12 @@
         public UserService(IUserRepository userRepository)
         {
             this.userRepository = userRepository;
+        }
+
+        public IQueryable<User> Get()
+        {
+            var result = this.userRepository.Get();
+            return result;
         }
 
         public async Task<IdentityResult> Create(User user)
