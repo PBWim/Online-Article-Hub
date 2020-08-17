@@ -1,10 +1,10 @@
-﻿namespace Web.Helpers
+﻿namespace Shared.Auth
 {
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Authorization.Infrastructure;
-    using Web.Models;
+    using Shared.Models;
 
     // https://www.c-sharpcorner.com/article/policy-based-role-based-authorization-in-asp-net-core/
     // Same like PoliciesAuthorizationHandler class. 
@@ -32,7 +32,7 @@
                 var userName = claims.FirstOrDefault(c => c.Type == "UserName").Value;
                 var roles = requirement.AllowedRoles;
 
-                validRole = new Users().GetUsers().Where(p => roles.Contains(p.Role) && p.UserName == userName).Any();
+                validRole = new UserModel().GetUsers().Where(p => roles.Contains(p.Role) && p.UserName == userName).Any();
             }
 
             if (validRole)

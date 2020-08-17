@@ -5,14 +5,26 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Web.Models;
+    using Service.Contracts;
+    using ServiceModel;
+    using Shared.Models;
 
     public class AccountController : Controller
     {
+        private readonly IUserService userService;
+        private readonly IMapper mapper;
+
+        public AccountController(IUserService userService, IMapper mapper)
+        {
+            this.userService = userService;
+            this.mapper = mapper;
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Login(string returnUrl = null)
@@ -21,20 +33,27 @@
             return View();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult SignUp()
+        {
+            return View();
+        }
+
         // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-2.2#create-an-authentication-cookie-1
         // Create Auth Cookie
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult Login(Users user)
+        public ActionResult Login(UserModel user)
         {
-            var users = new Users();
+            var users = new UserModel();
             var allUsers = users.GetUsers();
             var loggedUser = allUsers.FirstOrDefault(x => x.UserName == user.UserName);
             if (loggedUser != null && !string.IsNullOrWhiteSpace(loggedUser.EmailId))
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, loggedUser.Name), // Display this value on Bottom                   
+                    new Claim(ClaimTypes.Name, $"{loggedUser.FirstName} {loggedUser.LastName}"), // Display this value on Bottom                   
                     new Claim("UserName", loggedUser.UserName), // UserName Custom Claim - used for auth (role)
                     new Claim(ClaimTypes.Email, loggedUser.EmailId), // Email Claim - used for auth (policy)                   
                     new Claim(ClaimTypes.Role, loggedUser.Role), // Role claim - used for auth                    
@@ -75,9 +94,35 @@
                 else
                 {
                     return Redirect(user.ReturnUrl);
-                }                
+                }
             }
             return View(user);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> SignUp(UserModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                user.Role = "User";
+                var userObj = this.mapper.Map<User>(user);
+                var result = await this.userService.Create(userObj);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                // https://www.tutorialspoint.com/asp.net_core/asp.net_core_create_a_user.htm
+                else if (result.Errors.Any())
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        // * Put empty for the key. Otherwise the error msgs won't show
+                        ModelState.AddModelError(string.Empty, item.Description);
+                    }
+                }
+            }
+            return View();
         }
 
         // https://www.c-sharpcorner.com/article/policy-based-role-based-authorization-in-asp-net-core/

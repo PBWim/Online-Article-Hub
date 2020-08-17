@@ -1,4 +1,4 @@
-﻿namespace Web.Helpers
+﻿namespace Shared.Auth
 {
     using System.Linq;
     using System.Threading.Tasks;
