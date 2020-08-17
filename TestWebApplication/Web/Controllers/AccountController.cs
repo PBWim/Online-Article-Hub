@@ -6,6 +6,7 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Common;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
@@ -53,7 +54,7 @@
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, $"{loggedUser.FirstName} {loggedUser.LastName}"), // Display this value on Bottom                   
+                    new Claim(ClaimTypes.Name, $"{loggedUser.FirstName} {loggedUser.LastName}"), // Display this value on Bottom footer                   
                     new Claim("UserName", loggedUser.UserName), // UserName Custom Claim - used for auth (role)
                     new Claim(ClaimTypes.Email, loggedUser.EmailId), // Email Claim - used for auth (policy)                   
                     new Claim(ClaimTypes.Role, loggedUser.Role), // Role claim - used for auth                    
@@ -105,7 +106,7 @@
         {
             if (ModelState.IsValid)
             {
-                user.Role = "User";
+                user.Role = Constants.UserRole;
                 var userObj = this.mapper.Map<User>(user);
                 var result = await this.userService.Create(userObj);
                 if (result.Succeeded)
