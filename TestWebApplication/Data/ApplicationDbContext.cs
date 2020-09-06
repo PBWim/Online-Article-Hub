@@ -9,8 +9,7 @@
     {
         private readonly string connectionString;
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
-            IConfiguration configuration) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
         {
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }

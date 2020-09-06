@@ -16,9 +16,15 @@
             this.userRepository = userRepository;
         }
 
-        public IQueryable<User> Get()
+        public Task<bool> SignIn(string email, string password)
         {
-            var result = this.userRepository.Get();
+            var result = this.userRepository.SignIn(email, password);
+            return result;
+        }
+
+        public IQueryable<User> Get(bool isAll = false)
+        {
+            var result = this.userRepository.Get(isAll);
             return result;
         }
 

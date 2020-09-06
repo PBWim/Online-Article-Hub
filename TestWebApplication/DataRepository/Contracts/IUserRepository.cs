@@ -7,7 +7,9 @@
 
     public interface IUserRepository
     {
-        IQueryable<User> Get();
+        Task<bool> SignIn(string email, string password);
+
+        IQueryable<User> Get(bool isAll);
 
         Task<IdentityResult> Create(User user);
 
