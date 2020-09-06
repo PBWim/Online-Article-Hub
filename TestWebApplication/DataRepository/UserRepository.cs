@@ -16,19 +16,29 @@
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<DO.User> userManager;
+        private readonly SignInManager<DO.User> signInManager;
         private readonly IMapper mapper;
         private readonly ApplicationDbContext context;
 
-        public UserRepository(UserManager<DO.User> userManager, IMapper mapper, ApplicationDbContext context)
+        public UserRepository(UserManager<DO.User> userManager, SignInManager<DO.User> signInManager,
+            IMapper mapper, ApplicationDbContext context)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
             this.mapper = mapper;
             this.context = context;
         }
 
-        public IQueryable<User> Get()
+        public async Task<bool> SignIn(string email, string password)
         {
-            var users = this.context.Users.Where(x=> x.Role == Constants.UserRole);
+            var userObj = await this.userManager.FindByEmailAsync(email);
+            var isValid = await this.userManager.CheckPasswordAsync(userObj, password);
+            return isValid;
+        }
+
+        public IQueryable<User> Get(bool isAll)
+        {
+            var users = isAll ? this.context.Users : this.context.Users.Where(x => x.Role == Constants.UserRole);
             var usersList = users.ProjectTo<BO.User>(this.mapper.ConfigurationProvider);
             return usersList;
         }

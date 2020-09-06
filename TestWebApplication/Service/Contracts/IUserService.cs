@@ -7,7 +7,9 @@
 
     public interface IUserService
     {
-        IQueryable<User> Get();
+        Task<bool> SignIn(string email, string password);
+
+        IQueryable<User> Get(bool isAll = false);
 
         Task<IdentityResult> Create(User user);
 

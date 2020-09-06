@@ -45,25 +45,24 @@
         // Create Auth Cookie
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult Login(UserModel user)
+        public async Task<ActionResult> Login(UserModel user)
         {
-            var users = new UserModel();
-            var allUsers = users.GetUsers();
-            var loggedUser = allUsers.FirstOrDefault(x => x.UserName == user.UserName);
-            if (loggedUser != null && !string.IsNullOrWhiteSpace(loggedUser.EmailId))
+            var result = await this.userService.SignIn(user.EmailId, user.Password);
+            if (result)
             {
-                var claims = new List<Claim>
+                if (string.IsNullOrWhiteSpace(user.ReturnUrl))
                 {
-                    new Claim(ClaimTypes.Name, $"{loggedUser.FirstName} {loggedUser.LastName}"), // Display this value on Bottom footer                   
-                    new Claim("UserName", loggedUser.UserName), // UserName Custom Claim - used for auth (role)
-                    new Claim(ClaimTypes.Email, loggedUser.EmailId), // Email Claim - used for auth (policy)                   
-                    new Claim(ClaimTypes.Role, loggedUser.Role), // Role claim - used for auth                    
-                    new Claim(ClaimTypes.DateOfBirth, loggedUser.DateOfBirth), // DateOfBirth claim - used for auth (policy)
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    var loggedUser = this.userService.Get(true).FirstOrDefault(x => x.Email == user.EmailId);
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, $"{loggedUser.FirstName} {loggedUser.LastName}"), // Display this value on Bottom footer                   
+                        new Claim("UserName", loggedUser.UserName), // UserName Custom Claim - used for auth (role)
+                        new Claim(ClaimTypes.Email, loggedUser.Email), // Email Claim - used for auth (policy)                   
+                        new Claim(ClaimTypes.Role, loggedUser.Role), // Role claim - used for auth                    
+                        new Claim(ClaimTypes.DateOfBirth, DateTime.Now.AddYears(-20).ToString()), // DateOfBirth claim - used for auth (policy)
+                    };
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties
                     {
                         // Refreshing the authentication session should be allowed.
@@ -87,9 +86,6 @@
                         // redirect response value.
                         RedirectUri = "/Home"
                     });
-
-                if (string.IsNullOrWhiteSpace(user.ReturnUrl))
-                {
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -97,6 +93,7 @@
                     return Redirect(user.ReturnUrl);
                 }
             }
+            ModelState.AddModelError(string.Empty, "Invalid User Login");
             return View(user);
         }
 
