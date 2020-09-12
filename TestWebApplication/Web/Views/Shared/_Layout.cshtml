@@ -18,26 +18,10 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
+                        @*<li class="nav-item">
                             <a class="nav-link text-dark" asp-area=""
                                asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area=""
-                               asp-controller="Home" asp-action="Users">Users (Cookie Auth)</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area=""
-                               asp-controller="Home" asp-action="Privacy">Users Privacy & Policy (Policy Auth)</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area=""
-                               asp-controller="Home" asp-action="UsersRole">Users Role (Role Auth)</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area=""
-                               asp-controller="Home" asp-action="AdminUser">Admin Role (Role Auth)</a>
-                        </li>
+                        </li>*@                        
 
                         @*https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-web-app-sign-user-sign-in?tabs=aspnetcore*@
                         @if (User.Identity.IsAuthenticated)
@@ -52,8 +36,6 @@
                             <li class="collapse navbar-collapse justify-content-end">
                                 <a class="nav-link text-dark" asp-area=""
                                    asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="collapse navbar-collapse justify-content-end">
                                 <a class="nav-link text-dark" asp-area=""
                                    asp-controller="Account" asp-action="SignUp">Sign Up</a>
                             </li>
@@ -63,22 +45,41 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <partial name="_CookieConsentPartial" />
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            @if (User.Identity.IsAuthenticated)
-            {
-                <span class="text-right text-dark">Hello @User.Identity.Name!</span>
-            }
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading"></div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action bg-light"
+                   asp-controller="Home" asp-action="Users">Users (Cookie Auth)</a>
+                <a class="list-group-item list-group-item-action bg-light"
+                   asp-controller="Home" asp-action="Privacy">Users Privacy & Policy (Policy Auth)</a>
+                <a class="list-group-item list-group-item-action bg-light"
+                   asp-controller="Home" asp-action="UsersRole">Users Role (Role Auth)</a>
+                <a class="list-group-item list-group-item-action bg-light"
+                   asp-controller="Home" asp-action="AdminUser">Admin Role (Role Auth)</a>
+            </div>
         </div>
-    </footer>
+        <!-- /#sidebar-wrapper -->
+
+        <div class="page-content-wrapper container">
+            <partial name="_CookieConsentPartial" />
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2020 - Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <span class="text-right text-dark">Hello @User.Identity.Name!</span>
+                }
+            </div>
+        </footer>
+    </div>
     <partial name="_FooterPartialScripts" />
     @RenderSection("Scripts", required: false)
 </body>
