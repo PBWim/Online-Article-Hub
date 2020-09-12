@@ -50,10 +50,8 @@
             var result = await this.userService.SignIn(user.EmailId, user.Password);
             if (result)
             {
-                if (string.IsNullOrWhiteSpace(user.ReturnUrl))
-                {
-                    var loggedUser = this.userService.Get(true).FirstOrDefault(x => x.Email == user.EmailId);
-                    var claims = new List<Claim>
+                var loggedUser = this.userService.Get(true).FirstOrDefault(x => x.Email == user.EmailId);
+                var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, $"{loggedUser.FirstName} {loggedUser.LastName}"), // Display this value on Bottom footer                   
                         new Claim("UserName", loggedUser.UserName), // UserName Custom Claim - used for auth (role)
@@ -61,10 +59,10 @@
                         new Claim(ClaimTypes.Role, loggedUser.Role), // Role claim - used for auth                    
                         new Claim(ClaimTypes.DateOfBirth, DateTime.Now.AddYears(-20).ToString()), // DateOfBirth claim - used for auth (policy)
                     };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties
-                    {
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties
+                {
                         // Refreshing the authentication session should be allowed.
                         AllowRefresh = true,
 
@@ -85,7 +83,10 @@
                         // The full path or absolute URI to be used as an http 
                         // redirect response value.
                         RedirectUri = "/Home"
-                    });
+                });
+
+                if (string.IsNullOrWhiteSpace(user.ReturnUrl))
+                {                    
                     return RedirectToAction("Index", "Home");
                 }
                 else
