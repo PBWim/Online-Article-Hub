@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Security.Claims;
+    using System.Text;
     using AutoMapper;
     using Data;
     using DataModel;
@@ -16,6 +17,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.OpenApi.Models;
     using Shared;
     using Shared.Auth;
     using Shared.Mapper;
@@ -43,6 +46,46 @@
             // Register DBContext with ConnectionString
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Swagger
+            // https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-2.2&tabs=visual-studio
+            // https://dotnetcoretutorials.com/2020/01/31/using-swagger-in-net-core-3/
+            services.AddSwaggerGen(swagger =>
+            {
+                // https://www.c-sharpcorner.com/article/authentication-authorization-using-net-core-web-api-using-jwt-token-and/
+                //This is to generate the Default UI of Swagger Documentation  
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "JWT Token Authentication API",
+                    Description = "ASP.NET Core 2.2 Web API"
+                });
+
+                // To Enable authorization using Swagger (JWT)
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+                });
+
+                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        }, new string[] {}
+                    }
+                });
+            });
 
             // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-2.0&tabs=visual-studio#create-a-web-app-with-authentication
             // User Identity settings are defined here. So in the UserManager (on repository when user creating, updating, login etc)
@@ -82,7 +125,22 @@
             // https://www.c-sharpcorner.com/article/cookie-authentication-in-net-core-3-0/
             // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-2.2
             // Cookie based authorization - with Default values
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = this.Configuration["Jwt:Issuer"],
+                        ValidAudience = this.Configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]  
+                    };
+                });
 
             // Or we can customize further as below
             //services.AddAuthentication("CookieAuthentication")
@@ -137,10 +195,19 @@
                 app.UseHsts();
             }
 
-            // https://www.c-sharpcorner.com/article/add-file-logging-to-an-asp-net-core-mvc-application/
             // Logging
+            // https://www.c-sharpcorner.com/article/add-file-logging-to-an-asp-net-core-mvc-application/
             var path = Directory.GetCurrentDirectory();
             loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
+
+            // Swagger
+            // https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-2.2&tabs=visual-studio
+            // https://dotnetcoretutorials.com/2020/01/31/using-swagger-in-net-core-3/
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "JWT Token Authentication API");
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
