@@ -11,6 +11,7 @@
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using Service.Contracts;
     using ServiceModel;
     using Shared.Models;
@@ -19,17 +20,20 @@
     {
         private readonly IUserService userService;
         private readonly IMapper mapper;
+        private readonly ILogger<AccountController> logger;
 
-        public AccountController(IUserService userService, IMapper mapper)
+        public AccountController(IUserService userService, IMapper mapper, ILogger<AccountController> logger)
         {
             this.userService = userService;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Login(string returnUrl = null)
         {
+            this.logger.LogInformation($"The Account {nameof(this.Login)} action has been accessed with ReturnUrl : {returnUrl}");
             this.ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -38,6 +42,7 @@
         [AllowAnonymous]
         public ActionResult SignUp()
         {
+            this.logger.LogInformation($"The Account {nameof(this.SignUp)} action has been accessed");
             return View();
         }
 
@@ -47,6 +52,7 @@
         [AllowAnonymous]
         public async Task<ActionResult> Login(UserModel user)
         {
+            this.logger.LogInformation($"The Account {nameof(this.Login)} action has been accessed with User Model : {user}");
             var result = await this.userService.SignIn(user.EmailId, user.Password);
             if (result)
             {
@@ -86,14 +92,17 @@
                 });
 
                 if (string.IsNullOrWhiteSpace(user.ReturnUrl))
-                {                    
+                {
+                    this.logger.LogInformation($"User successfully Login and redirect to Home Index Page");
                     return RedirectToAction("Index", "Home");
                 }
                 else
                 {
+                    this.logger.LogInformation($"User successfully Login and redirect to {user.ReturnUrl}");
                     return Redirect(user.ReturnUrl);
                 }
             }
+            this.logger.LogWarning($"Invalid User Login of User Model : {user}");
             ModelState.AddModelError(string.Empty, "Invalid User Login");
             return View(user);
         }
@@ -102,6 +111,7 @@
         [AllowAnonymous]
         public async Task<ActionResult> SignUp(UserModel user)
         {
+            this.logger.LogInformation($"The Account {nameof(this.SignUp)} action has been accessed with User Model : {user}");
             if (ModelState.IsValid)
             {
                 user.Role = Constants.UserRole;
@@ -109,11 +119,13 @@
                 var result = await this.userService.Create(userObj);
                 if (result.Succeeded)
                 {
+                    this.logger.LogInformation($"User created successfully : {userObj} and redirected to Account Login");
                     return RedirectToAction("Login", "Account");
                 }
                 // https://www.tutorialspoint.com/asp.net_core/asp.net_core_create_a_user.htm
                 else if (result.Errors.Any())
                 {
+                    this.logger.LogWarning($"User did not creat : {userObj} with errors : {result.Errors}");
                     foreach (var item in result.Errors)
                     {
                         // * Put empty for the key. Otherwise the error msgs won't show
@@ -129,6 +141,7 @@
         [AllowAnonymous]
         public ActionResult AccessDenied()
         {
+            this.logger.LogInformation($"The Account {nameof(this.AccessDenied)} action has been accessed");
             return View();
         }
 
@@ -136,6 +149,7 @@
         [Authorize]
         public async Task<ActionResult> SignOut()
         {
+            this.logger.LogInformation($"The Account {nameof(this.SignOut)} action has been accessed, user signed-out and redirected to Home Index ");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }

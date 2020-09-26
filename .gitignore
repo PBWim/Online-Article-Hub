@@ -343,3 +343,5 @@ healthchecksdb
 **/wwwroot/lib
 **/wwwroot/css
 **/wwwroot/js
+
+Logs/
