@@ -6,6 +6,7 @@
     using Common;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using Service.Contracts;
     using Shared.Models;
     using Web.Models;
@@ -14,16 +15,19 @@
     {
         private readonly IUserService userService;
         private readonly IMapper mapper;
+        private readonly ILogger<HomeController> logger;
 
-        public HomeController(IUserService userService, IMapper mapper)
+        public HomeController(IUserService userService, IMapper mapper, ILogger<HomeController> logger)
         {
             this.userService = userService;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         [AllowAnonymous]
         public IActionResult Index()
         {
+            this.logger.LogInformation($"The Home {nameof(this.Index)} action has been accessed"); 
             return View();
         }
 
@@ -32,6 +36,7 @@
         [Authorize(Policy = Constants.Policy)]
         public IActionResult Privacy()
         {
+            this.logger.LogInformation($"The Home {nameof(this.Privacy)} action has been accessed");
             return View();
         }
 
@@ -39,6 +44,7 @@
         [Authorize]
         public ActionResult Users()
         {
+            this.logger.LogInformation($"The Home {nameof(this.Users)} action has been accessed");
             var users = this.userService.Get();
             var usersList = users.ProjectTo<UserModel>(this.mapper.ConfigurationProvider);
             return View(usersList);
@@ -51,6 +57,7 @@
         [Authorize(Roles = Constants.UserRole)]
         public ActionResult UsersRole()
         {
+            this.logger.LogInformation($"The Home {nameof(this.UsersRole)} action has been accessed");
             var users = this.userService.Get();
             var usersList = users.ProjectTo<UserModel>(this.mapper.ConfigurationProvider);
             return View(nameof(this.Users), usersList);
@@ -61,6 +68,7 @@
         [Authorize(Roles = Constants.AdminRole)]
         public ActionResult AdminUser()
         {
+            this.logger.LogInformation($"The Home {nameof(this.AdminUser)} action has been accessed");
             var users = this.userService.Get();
             var usersList = users.ProjectTo<UserModel>(this.mapper.ConfigurationProvider);
             return View(nameof(this.Users), usersList);
@@ -70,6 +78,7 @@
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            this.logger.LogInformation($"The Home {nameof(this.Error)} action has been accessed");
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

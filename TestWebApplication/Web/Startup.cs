@@ -1,6 +1,7 @@
 ﻿namespace Web
 {
     using System;
+    using System.IO;
     using System.Security.Claims;
     using AutoMapper;
     using Data;
@@ -14,6 +15,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Shared;
     using Shared.Auth;
     using Shared.Mapper;
@@ -122,7 +124,7 @@
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -134,6 +136,11 @@
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // https://www.c-sharpcorner.com/article/add-file-logging-to-an-asp-net-core-mvc-application/
+            // Logging
+            var path = Directory.GetCurrentDirectory();
+            loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
