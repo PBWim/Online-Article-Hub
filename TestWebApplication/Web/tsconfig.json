@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false
+  },
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "comment": "Ref : https://stackoverflow.com/questions/12799237/how-to-watch-and-compile-all-typescript-sources/30751369",
+  "comment2": "Ref : https://www.typescriptlang.org/docs/handbook/gulp.html"
+}

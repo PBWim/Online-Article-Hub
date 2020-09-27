@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {
+    "del": "^5.1.0",
+    "gulp": "^4.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-minify": "^3.1.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-sass": "^4.1.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify": "^3.0.2",
+    "typescript": "^3.9.5"
+  },
+  "comment": "Url Reference for Gulp operations : https://www.davepaquette.com/archive/2014/10/08/how-to-use-gulp-in-visual-studio.aspx",
+  "comment2": "Minification : https://www.toptal.com/javascript/optimize-js-and-css-with-gulp"
+}
