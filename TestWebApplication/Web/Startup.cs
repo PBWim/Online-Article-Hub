@@ -23,6 +23,7 @@
     using Shared.Auth;
     using Shared.Mapper;
     using Web.Helpers;
+    using Web.Hubs;
 
     public class Startup
     {
@@ -179,6 +180,10 @@
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            // SignalR
+            // https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr?view=aspnetcore-2.2&tabs=visual-studio
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -212,6 +217,13 @@
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            // SignalR
+            // https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr?view=aspnetcore-2.2&tabs=visual-studio
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chathub");
+            });
 
             // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-2.2
             // Invoke the Authentication Middleware that sets the HttpContext.User property

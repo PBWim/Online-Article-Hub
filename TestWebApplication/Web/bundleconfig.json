@@ -1,0 +1,53 @@
+[
+  // https://exceptionnotfound.net/asp-net-mvc-demystified-bundling-and-minification/
+  // https://docs.microsoft.com/en-us/aspnet/core/client-side/bundling-and-minification?view=aspnetcore-3.1
+
+  // Each time a browser runs across one of these tags, 
+  // it makes a separate HTTP request to grab the corresponding file. 
+  // As of MVC4, we have a way to reduce the number of requests that 
+  // the browser needs to make to get all of these resource files 
+  // (and even reduce the size of the files themselves): Bundling and Minification
+  // 
+  // This file is creating Bundles by associating multiple files to routes. 
+  // For example, the "~/bundles/bootstrap" route will correspond to both 
+  // the bootstrap.js file and the respond.js file, and the browser will 
+  // only need one HTTP request to retrieve both files..
+  //
+  //{
+  //  "outputFileName": "wwwroot/css/bootstrap.min.css",
+  //  "inputFiles": [
+  //    "wwwroot/js/bootstrap.js",
+  //    "wwwroot/js/site.js"
+  //  ]
+  //}
+
+  //{
+  //  "outputFileName": "wwwroot/css/site.min.css",
+  //  "inputFiles": [
+  //    "wwwroot/css/site.css"
+  //  ]
+  //},
+  //{
+  //  "outputFileName": "wwwroot/js/site.min.js",
+  //  "inputFiles": [
+  //    "wwwroot/js/site.js"
+  //  ],
+  //  "minify": {
+  //    "enabled": true,
+  //    "renameLocals": true
+  //  },
+  //  "sourceMap": false
+  //}
+
+  {
+    "outputFileName": "wwwroot/js/ChatBot.min.js",
+    "inputFiles": [
+      "wwwroot/js/ChatBot.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
+]

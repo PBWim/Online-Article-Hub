@@ -4,3 +4,45 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                User : 
+                <input type="text" id="userInput" disabled
+                       class="form-control" value="@User.Identity.Name" />
+            </div>
+            <div class="row">
+                Message : 
+                <input type="text" id="messageInput" class="form-control" />
+            </div>
+
+            <div class="row mt-4">
+                <input type="button" id="sendButton" class="btn btn-primary" 
+                       value="Send Message" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <environment include="Development">
+        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/ChatBot.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+        <script src="~/js/ChatBot.js"></script>
+    </environment>
+}
